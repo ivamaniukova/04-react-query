@@ -18,17 +18,22 @@ interface TMDBSearchResponse {
   total_pages: number;
 }
 
-export async function fetchMovies(query: string): Promise<Movie[]> {
+export async function fetchMovies(query: string, page = 1): Promise<TMDBSearchResponse> {
   if (!query.trim()) {
-    return [];
+    return {
+      page: 1,
+      results: [],
+      total_results: 0,
+      total_pages: 0,
+    };
   }
   const response = await api.get<TMDBSearchResponse>('/search/movie', {
     params: {
       query,
       include_adult: false,
       language: 'en-US',
-      page: 1,
+      page,
     },
   });
-  return response.data.results;
+  return response.data;
 }
